@@ -78,7 +78,10 @@ export default function ResultScreen({ navigation }) {
   };
 
   return (
-    <ScreenWrapper backgroundColor={bgColor}>
+    <ScreenWrapper
+      backgroundImage={civiliansWon ? require('../../assets/civilian-bg.png') : require('../../assets/impostor-bg.png')}
+      backgroundColor={bgColor}
+    >
       <View style={styles.container}>
         <Ionicons
           name={civiliansWon ? 'trophy-outline' : 'skull-outline'}
@@ -148,6 +151,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     letterSpacing: 2,
     marginTop: 16,
+    textAlign: 'center',
   },
   message: {
     fontSize: 15,
@@ -177,6 +181,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.text,
     marginTop: 2,
+    textAlign: 'center',
   },
   divider: {
     height: 1,

@@ -7,11 +7,13 @@ import QuizExitButton from '../components/QuizExitButton';
 import useQuizStore from '../store/quizStore';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
+import { getQuizBg } from '../utils/quizBg';
 
 export default function QuizPassScreen({ navigation }) {
   const players = useQuizStore((s) => s.players);
   const currentPlayerIndex = useQuizStore((s) => s.currentPlayerIndex);
   const currentPlayer = players[currentPlayerIndex];
+  const currentQuestion = useQuizStore((s) => s.currentQuestion);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -23,7 +25,7 @@ export default function QuizPassScreen({ navigation }) {
   if (!currentPlayer) return null;
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper backgroundImage={getQuizBg(currentQuestion?.categoryId)}>
       <QuizExitButton navigation={navigation} />
       <View style={styles.container}>
         <Ionicons name="phone-portrait-outline" size={56} color={colors.textDim} />

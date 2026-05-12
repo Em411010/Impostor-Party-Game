@@ -16,6 +16,7 @@ import useQuizStore from '../store/quizStore';
 import { quizCategories } from '../data/quizCategories';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
+import { QUIZ_DEFAULT_BG } from '../utils/quizBg';
 
 const ALL_RANDOM_ID = 'all_random';
 
@@ -168,7 +169,7 @@ export default function QuizSetupScreen({ navigation }) {
     : `${selectedCategoryIds.length} ${selectedCategoryIds.length === 1 ? 'category' : 'categories'} selected`;
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper backgroundImage={QUIZ_DEFAULT_BG}>
       <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         <ScreenHeader title="Quiz Survival" navigation={navigation} />
 
@@ -186,7 +187,7 @@ export default function QuizSetupScreen({ navigation }) {
             />
             {playerNames.length > 2 && (
               <Pressable onPress={() => removePlayer(index)} style={styles.removeBtn} hitSlop={8}>
-                <Ionicons name="close-circle" size={24} color={colors.danger} />
+                <Ionicons name="trash-outline" size={20} color="#e53935" />
               </Pressable>
             )}
           </View>
@@ -312,22 +313,22 @@ const styles = StyleSheet.create({
   playerRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
     marginBottom: 8,
-    gap: 8,
+    paddingRight: 4,
   },
   playerInput: {
     flex: 1,
-    backgroundColor: colors.card,
-    borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     color: colors.text,
     fontSize: 15,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   removeBtn: {
-    padding: 4,
+    padding: 8,
   },
   addPlayerBtn: {
     flexDirection: 'row',

@@ -44,12 +44,14 @@ export default function RoleRevealScreen({ navigation }) {
   if (!currentPlayer) return null;
 
   const isImpostor = currentPlayer.role === 'impostor';
-  const bgColor = isImpostor ? colors.impostorBg : colors.civilianBg;
+  const bgImage = isImpostor
+    ? require('../../assets/impostor-bg.png')
+    : require('../../assets/civilian-bg.png');
   const accentColor = isImpostor ? colors.impostor : colors.civilian;
   const roleLabel = isImpostor ? 'IMPOSTOR' : 'CIVILIAN';
 
   return (
-    <ScreenWrapper backgroundColor={bgColor}>
+    <ScreenWrapper backgroundImage={bgImage}>
       <View style={styles.container}>
         <Ionicons
           name={isImpostor ? 'skull-outline' : 'checkmark-circle-outline'}
@@ -124,6 +126,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.text,
     fontWeight: '600',
+    textAlign: 'center',
   },
   wordBox: {
     backgroundColor: colors.background + '80',
@@ -137,17 +140,20 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.textDim,
     marginBottom: 6,
+    textAlign: 'center',
   },
   word: {
     fontSize: 36,
     fontWeight: '800',
     color: colors.text,
+    textAlign: 'center',
   },
   wordHidden: {
     fontSize: 36,
     fontWeight: '800',
     color: colors.impostor,
     marginTop: 8,
+    textAlign: 'center',
   },
   wordHint: {
     fontSize: 14,
@@ -169,6 +175,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.civilian,
     fontWeight: '700',
+    textAlign: 'center',
   },
   btn: {
     width: '80%',

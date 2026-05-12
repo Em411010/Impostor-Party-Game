@@ -3,14 +3,17 @@ import { Pressable, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 
-export default function PlayerListItem({ player, selected, onPress }) {
+export default function PlayerListItem({ player, selected, onPress, multiSelect = false }) {
+  const icon = multiSelect
+    ? (selected ? 'checkbox' : 'square-outline')
+    : (selected ? 'radio-button-on' : 'radio-button-off');
   return (
     <Pressable
       onPress={() => onPress(player.id)}
       style={[styles.item, selected && styles.itemSelected]}
     >
       <Ionicons
-        name={selected ? 'radio-button-on' : 'radio-button-off'}
+        name={icon}
         size={22}
         color={selected ? colors.primary : colors.textDim}
       />

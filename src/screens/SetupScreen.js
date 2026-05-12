@@ -20,6 +20,7 @@ export default function SetupScreen({ navigation, route }) {
   const targetRoleCount = useGameStore((s) => s.targetRoleCount);
   const setTargetRoleCount = useGameStore((s) => s.setTargetRoleCount);
   const startGame = useGameStore((s) => s.startGame);
+  const savedPlayerNames = useGameStore((s) => s.playerNames);
   const customCategories = useSettingsStore((s) => s.customCategories);
   const defaultCategoryAdditions = useSettingsStore((s) => s.defaultCategoryAdditions);
   const activeMode = route?.params?.mode || mode;
@@ -38,8 +39,8 @@ export default function SetupScreen({ navigation, route }) {
   }, [customCategories, defaultCategoryAdditions]);
 
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
-  const [playerNames, setPlayerNames] = useState(
-    Array.from({ length: playerCount }, (_, i) => `Player ${i + 1}`)
+  const [playerNames, setPlayerNames] = useState(() =>
+    Array.from({ length: playerCount }, (_, i) => savedPlayerNames[i] || `Player ${i + 1}`)
   );
 
   // Keep playerNames in sync with playerCount
@@ -47,7 +48,7 @@ export default function SetupScreen({ navigation, route }) {
     setPlayerCount(count);
     setPlayerNames((prev) => {
       const arr = [...prev];
-      while (arr.length < count) arr.push(`Player ${arr.length + 1}`);
+      while (arr.length < count) arr.push(savedPlayerNames[arr.length] || `Player ${arr.length + 1}`);
       return arr.slice(0, count);
     });
     if (targetRoleCount >= count) {
@@ -62,6 +63,15 @@ export default function SetupScreen({ navigation, route }) {
       return arr;
     });
   }, []);
+
+  const handleDeletePlayer = useCallback((index) => {
+    const newCount = playerCount - 1;
+    setPlayerCount(newCount);
+    setPlayerNames((prev) => prev.filter((_, i) => i !== index));
+    if (targetRoleCount >= newCount) {
+      setTargetRoleCount(Math.max(1, newCount - 1));
+    }
+  }, [playerCount, targetRoleCount, setPlayerCount, setTargetRoleCount]);
 
   const toggleCategory = useCallback((id) => {
     if (id === 'random') {
@@ -103,15 +113,21 @@ export default function SetupScreen({ navigation, route }) {
 
         <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Player Names</Text>
         {Array.from({ length: playerCount }, (_, i) => (
-          <TextInput
-            key={i}
-            style={styles.nameInput}
-            value={playerNames[i] || ''}
-            onChangeText={(text) => handleNameChange(i, text)}
-            placeholder={`Player ${i + 1}`}
-            placeholderTextColor={colors.textMuted}
-            maxLength={20}
-          />
+          <View key={i} style={styles.nameRow}>
+            <TextInput
+              style={styles.nameInput}
+              value={playerNames[i] || ''}
+              onChangeText={(text) => handleNameChange(i, text)}
+              placeholder={`Player ${i + 1}`}
+              placeholderTextColor={colors.textMuted}
+              maxLength={20}
+            />
+            {playerCount > 3 && (
+              <Pressable onPress={() => handleDeletePlayer(i)} style={styles.deleteBtn}>
+                <Ionicons name="trash-outline" size={20} color="#e53935" />
+              </Pressable>
+            )}
+          </View>
         ))}
 
         <Text style={[styles.sectionTitle, { marginTop: 20 }]}>{`Number of ${modeRule.countLabel}`}</Text>
@@ -171,13 +187,22 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     marginTop: -8,
   },
-  nameInput: {
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: colors.card,
     borderRadius: 10,
+    marginBottom: 8,
+    paddingRight: 4,
+  },
+  nameInput: {
+    flex: 1,
     padding: 12,
     color: colors.text,
     fontSize: 15,
-    marginBottom: 8,
+  },
+  deleteBtn: {
+    padding: 10,
   },
   categoryList: {
     marginBottom: 20,

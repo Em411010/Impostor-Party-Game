@@ -5,6 +5,7 @@ import ScreenWrapper from '../components/ScreenWrapper';
 import QuizExitButton from '../components/QuizExitButton';
 import useQuizStore from '../store/quizStore';
 import { colors } from '../theme/colors';
+import { getQuizBg } from '../utils/quizBg';
 
 const LABELS = ['A', 'B', 'C', 'D'];
 
@@ -33,7 +34,7 @@ export default function QuizQuestionScreen({ navigation }) {
   if (!currentQuestion || !currentPlayer) return null;
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper backgroundImage={getQuizBg(currentQuestion?.categoryId)}>
       <QuizExitButton navigation={navigation} />
       <View style={styles.container}>
         {/* Player + category badge */}

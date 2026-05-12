@@ -1,19 +1,24 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '../theme/colors';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import { useFonts, Creepster_400Regular } from '@expo-google-fonts/creepster';
 
 export default function SplashScreen({ navigation }) {
+  const [fontsLoaded] = useFonts({ Creepster_400Regular });
+
   useEffect(() => {
+    if (!fontsLoaded) return;
     const timer = setTimeout(() => {
       navigation.replace('Home');
-    }, 1500);
+    }, 2000);
     return () => clearTimeout(timer);
-  }, [navigation]);
+  }, [fontsLoaded, navigation]);
+
+  if (!fontsLoaded) return null;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>IMPOSTOR</Text>
-      <Text style={styles.subtitle}>Pass the Phone</Text>
+      <Image source={require('../../assets/splash-icon.png')} style={styles.icon} resizeMode="contain" />
+      <Text style={styles.logo}>Could you{'\n'}find one?</Text>
     </View>
   );
 }
@@ -21,20 +26,22 @@ export default function SplashScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#000000',
     alignItems: 'center',
     justifyContent: 'center',
   },
   logo: {
-    fontSize: 48,
-    fontWeight: '900',
-    color: colors.primary,
-    letterSpacing: 6,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: colors.textDim,
-    marginTop: 8,
+    fontFamily: 'Creepster_400Regular',
+    fontSize: 56,
+    color: '#cc0000',
+    textAlign: 'center',
+    lineHeight: 68,
     letterSpacing: 2,
   },
+  icon: {
+    width: 260,
+    height: 260,
+    marginBottom: 24,
+  },
 });
+

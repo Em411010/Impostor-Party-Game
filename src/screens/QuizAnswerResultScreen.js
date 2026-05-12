@@ -7,6 +7,7 @@ import QuizExitButton from '../components/QuizExitButton';
 import useQuizStore from '../store/quizStore';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
+import { getQuizBg } from '../utils/quizBg';
 
 function Hearts({ lives, maxLives }) {
   return (
@@ -30,6 +31,8 @@ export default function QuizAnswerResultScreen({ navigation }) {
   const lastAnswerCorrect = useQuizStore((s) => s.lastAnswerCorrect);
   const lastCorrectAnswer = useQuizStore((s) => s.lastCorrectAnswer);
   const currentPlayerEliminated = useQuizStore((s) => s.currentPlayerEliminated);
+
+  const currentQuestion = useQuizStore((s) => s.currentQuestion);
 
   const currentPlayer = players[currentPlayerIndex];
 
@@ -56,7 +59,7 @@ export default function QuizAnswerResultScreen({ navigation }) {
   const iconName = correct ? 'checkmark-circle' : 'close-circle';
 
   return (
-    <ScreenWrapper backgroundColor={bgColor}>
+    <ScreenWrapper backgroundImage={getQuizBg(currentQuestion?.categoryId)} backgroundColor={bgColor}>
       <QuizExitButton navigation={navigation} light />
       <View style={styles.container}>
         <Text style={styles.playerName}>{currentPlayer.name}</Text>

@@ -23,6 +23,7 @@ const useGameStore = create((set, get) => ({
   discussionDirection: 'clockwise',
   // Voting (sequential for multiple hidden-role players)
   caughtHiddenRoleIds: [],
+  eliminatedCivilianIds: [],
   currentVotingRound: 0,
   votedPlayerId: null,
   voteResult: null,
@@ -43,6 +44,7 @@ const useGameStore = create((set, get) => ({
     set({
       mode,
       status: 'reveal',
+      playerNames,
       categoryIds: categories.map((c) => c.id),
       categoryName: game.categoryName,
       categories,
@@ -54,6 +56,7 @@ const useGameStore = create((set, get) => ({
       discussionFirstPlayer: game.players[firstIdx],
       discussionDirection: direction,
       caughtHiddenRoleIds: [],
+      eliminatedCivilianIds: [],
       currentVotingRound: 0,
       votedPlayerId: null,
       voteResult: null,
@@ -114,6 +117,63 @@ const useGameStore = create((set, get) => ({
     }
   },
 
+  submitVotes: (playerIds) => {
+    const { hiddenRoleIds, caughtHiddenRoleIds, mode } = get();
+    const modeRule = getModeRule(mode);
+    const allAreImpostors = playerIds.every((id) => hiddenRoleIds.includes(id));
+    if (allAreImpostors) {
+      const newCaught = [...new Set([...caughtHiddenRoleIds, ...playerIds])];
+      if (newCaught.length >= hiddenRoleIds.length) {
+        set({
+          votedPlayerId: playerIds[0],
+          voteResult: 'caught',
+          caughtHiddenRoleIds: newCaught,
+          winner: modeRule.caughtWinner,
+          status: 'result',
+        });
+      } else {
+        set({
+          voteResult: 'caught',
+          caughtHiddenRoleIds: newCaught,
+          currentVotingRound: newCaught.length,
+          votedPlayerId: null,
+          status: 'voting',
+        });
+      }
+    } else {
+      // Wrong vote: end game if eliminated civilians reach floor(totalCivilians / 3)
+      if (playerIds.length === 1) {
+        const { players, eliminatedCivilianIds } = get();
+        const newEliminated = [...eliminatedCivilianIds, playerIds[0]];
+        const totalCivilians = players.filter((p) => !hiddenRoleIds.includes(p.id)).length;
+        const threshold = Math.max(1, Math.floor(totalCivilians / 3));
+        if (newEliminated.length >= threshold) {
+          set({
+            votedPlayerId: playerIds[0],
+            voteResult: 'escaped',
+            eliminatedCivilianIds: newEliminated,
+            winner: modeRule.escapedWinner,
+            status: 'result',
+          });
+        } else {
+          set({
+            eliminatedCivilianIds: newEliminated,
+            voteResult: 'wrong',
+            votedPlayerId: playerIds[0],
+            status: 'voting',
+          });
+        }
+      } else {
+        set({
+          votedPlayerId: playerIds[0],
+          voteResult: 'escaped',
+          winner: modeRule.escapedWinner,
+          status: 'result',
+        });
+      }
+    }
+  },
+
   submitGuess: (guess, actualWord) => {
     const correct = evaluateGuess(guess, actualWord);
     const { votedPlayerId, caughtHiddenRoleIds, hiddenRoleIds, mode } = get();
@@ -161,6 +221,7 @@ const useGameStore = create((set, get) => ({
       discussionFirstPlayer: game.players[firstIdx],
       discussionDirection: direction,
       caughtHiddenRoleIds: [],
+      eliminatedCivilianIds: [],
       currentVotingRound: 0,
       votedPlayerId: null,
       voteResult: null,
@@ -183,6 +244,7 @@ const useGameStore = create((set, get) => ({
       discussionFirstPlayer: null,
       discussionDirection: 'clockwise',
       caughtHiddenRoleIds: [],
+      eliminatedCivilianIds: [],
       currentVotingRound: 0,
       votedPlayerId: null,
       voteResult: null,

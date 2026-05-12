@@ -6,6 +6,7 @@ import BigButton from '../components/BigButton';
 import useQuizStore from '../store/quizStore';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
+import { QUIZ_DEFAULT_BG } from '../utils/quizBg';
 
 export default function QuizWinnerScreen({ navigation }) {
   const winner = useQuizStore((s) => s.winner);
@@ -35,7 +36,7 @@ export default function QuizWinnerScreen({ navigation }) {
   };
 
   return (
-    <ScreenWrapper backgroundColor={colors.civilianBg}>
+    <ScreenWrapper backgroundImage={QUIZ_DEFAULT_BG} backgroundColor={colors.civilianBg}>
       <View style={styles.container}>
         <Ionicons name="trophy" size={90} color={colors.warning} />
 

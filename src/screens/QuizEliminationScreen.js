@@ -7,11 +7,13 @@ import QuizExitButton from '../components/QuizExitButton';
 import useQuizStore from '../store/quizStore';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
+import { getQuizBg } from '../utils/quizBg';
 
 export default function QuizEliminationScreen({ navigation }) {
   const players = useQuizStore((s) => s.players);
   const currentPlayerIndex = useQuizStore((s) => s.currentPlayerIndex);
   const eliminatedPlayer = players[currentPlayerIndex];
+  const currentQuestion = useQuizStore((s) => s.currentQuestion);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -23,7 +25,7 @@ export default function QuizEliminationScreen({ navigation }) {
   if (!eliminatedPlayer) return null;
 
   return (
-    <ScreenWrapper backgroundColor={colors.impostorBg}>
+    <ScreenWrapper backgroundImage={getQuizBg(currentQuestion?.categoryId)} backgroundColor={colors.impostorBg}>
       <QuizExitButton navigation={navigation} light />
       <View style={styles.container}>
         <Ionicons name="skull-outline" size={80} color={colors.impostor} />

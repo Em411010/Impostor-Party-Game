@@ -7,6 +7,7 @@ import QuizExitButton from '../components/QuizExitButton';
 import useQuizStore from '../store/quizStore';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
+import { getQuizBg } from '../utils/quizBg';
 
 function PlayerLivesRow({ player, startingLives }) {
   return (
@@ -46,6 +47,7 @@ export default function QuizLivesSummaryScreen({ navigation }) {
   const startingLives = useQuizStore((s) => s.startingLives);
   const winner = useQuizStore((s) => s.winner);
   const advanceTurn = useQuizStore((s) => s.advanceTurn);
+  const currentQuestion = useQuizStore((s) => s.currentQuestion);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -64,7 +66,7 @@ export default function QuizLivesSummaryScreen({ navigation }) {
   };
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper backgroundImage={getQuizBg(currentQuestion?.categoryId)}>
       <QuizExitButton navigation={navigation} />
       <View style={styles.container}>
         <Text style={styles.title}>Lives Remaining</Text>
